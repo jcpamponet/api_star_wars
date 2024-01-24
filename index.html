@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/global.css">
+  <title>Star Wars Films</title>
+</head>
+<body>
+
+  <h1>Star Wars Filmes</h1>
+
+  <!-- Adiciona um menu de seleção para escolher um filme -->
+  <label for="selecao-filmes">Escolha um filme:</label>
+  <select id="selecao-filmes" onchange="mostrarDetalhesFilme()">
+    <option value="-1">Selecione um filme</option>
+  </select>
+
+  <ul id="filmes-lista"></ul>
+
+  <div id="detalhes-filme"></div>
+
+  <script>
+    const filmesUrl = 'https://swapi.dev/api/films/';
+    const urlsImagens = [
+      'url_filme_1',
+      'url_filme_2',
+      'url_filme_3',
+      'url_filme_4',
+      'url_filme_5',
+      'url_filme_6',
+      'url_filme_7',
+    ];
+
+    async function obterFilmes() {
+      try {
+        const resposta = await fetch(filmesUrl);
+        const dados = await resposta.json();
+
+        const selecaoFilmes = document.getElementById('selecao-filmes');
+        const listaFilmes = document.getElementById('filmes-lista');
+
+        dados.results.forEach((filme, index) => {
+          const optionFilme = document.createElement('option');
+          optionFilme.value = index;
+          optionFilme.textContent = filme.title;
+          selecaoFilmes.appendChild(optionFilme);
+
+          const itemLista = document.createElement('li');
+          itemLista.innerHTML = `
+            <strong>${filme.title}</strong> (${filme.release_date})<br>
+            <img src="${urlsImagens[index]}" alt="Capa do Filme">
+          `;
+
+          listaFilmes.appendChild(itemLista);
+        });
+      } catch (erro) {
+        console.error('Erro ao obter filmes:', erro);
+      }
+    }
+
+    function mostrarDetalhesFilme() {
+      const selecaoFilmes = document.getElementById('selecao-filmes');
+      const detalhesFilme = document.getElementById('detalhes-filme');
+      const indexSelecionado = selecaoFilmes.value;
+
+      if (indexSelecionado !== '-1') {
+        const filmeSelecionado = document.getElementById('filmes-lista').children[indexSelecionado];
+        detalhesFilme.innerHTML = filmeSelecionado.innerHTML;
+      } else {
+        detalhesFilme.innerHTML = '';
+      }
+    }
+
+    obterFilmes();
+  </script>
+
+</body>
+</html>
